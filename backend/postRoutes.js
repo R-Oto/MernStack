@@ -1,60 +1,63 @@
-const express = require('express')
-const postRoutes = express.Router()
-const database = require('./connect')
-const ObjectId = require('mongodb').ObjectId;
+const express = require('express');
+const Post = require('./postModel.js'); 
+const postRoutes = express.Router();
 
-postRoutes.route("/posts").get(async(req,res)=>{
-    let db = database.getDb()
-    let data = await db.collection("posts").find({}).toArray()
-    if(data.length > 0){
-        res.json(data)
-    }else{
-        throw new Error("Data was not found :(")
+postRoutes.route("/posts").get(async (req, res) => {
+    try {
+        const data = await Post.find();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
     }
-})
+});
 
-postRoutes.route("/posts/:id").get(async(req,res)=>{
-    let db = database.getDb()
-    let data = await db.collection("posts").findOne({_id: new ObjectId(req.params.id)})
-    if(Object.keys(data).length > 0){
-        res.json(data)
-    }else{
-        throw new Error("Data was not found :(")
-    }
-})
-
-postRoutes.route("/posts").post(async(req,res)=>{
-    let db = database.getDb()
-    let mognoObject = {
-        title:req.body.title,
-        description:req.body.description,
-        content:req.body.content,
-        author:req.body.author,
-        dateCreated:req.body.dateCreated,
-    }
-    let data = await db.collection("posts").insertOne(mognoObject)
-    res.json(data)
-})
-
-postRoutes.route("/posts/:id").put(async(req,res)=>{
-    let db = database.getDb()
-    let mognoObject = {
-        $set: {
-            title:req.body.title,
-            description:req.body.description,
-            content:req.body.content,
-            author:req.body.author,
-            dateCreated:req.body.dateCreated,
+postRoutes.route("/posts/:id").get(async (req, res) => {
+    try {
+        const data = await Post.findById(req.params.id);
+        if (data) {
+            res.json(data);
+        } else {
+            res.status(404).json({ message: "Data was not found :(" });
         }
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
     }
-    let data = await db.collection("posts").updateOne({_id: new ObjectId(req.params.id)}, mognoObject)
-    res.json(data)
-})
+});
 
-postRoutes.route("/posts/:id").delete(async(req,res)=>{
-    let db = database.getDb()
-    let data = await db.collection("posts").deleteOne({_id: new ObjectId(req.params.id)})
-    res.json(data)
-})
+postRoutes.route("/posts").post(async (req, res) => {
+    try {
+        const post = new Post(req.body);
+        const data = await post.save();
+        res.status(201).json(data);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+postRoutes.route("/posts/:id").put(async (req, res) => {
+    try {
+        const result = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (result) {
+            res.json({ message: "Post updated successfully", data: result });
+        } else {
+            res.status(404).json({ message: "Post not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+postRoutes.route("/posts/:id").delete(async (req, res) => {
+    try {
+        const result = await Post.findByIdAndDelete(req.params.id);
+        if (result) {
+            res.json({ message: "Post deleted successfully" });
+        } else {
+            res.status(404).json({ message: "Post not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 module.exports = postRoutes;
