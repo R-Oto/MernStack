@@ -9,5 +9,6 @@ app.use(express.json())
 app.use(cors())
 
 app.listen(port, () => {
+    connect.connectToServer()
     console.log(`Server started on port ${port}`)
 })
