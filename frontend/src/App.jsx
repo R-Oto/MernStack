@@ -1,42 +1,34 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import {getPosts, getPost, createPost, updatePost, deletePost} from './api'
 const App = () => {
 
-  const [data, setData] = useState();
+  const [posts, setPosts] = useState();
 
-  async function createPost(){
+  async function makePost(){
     let postObject = {
-      title:'aaa',
-      description:'aaa',
-      content:'aaa',
-      author:'aaa',
+      title:'aaa1',
+      description:'aaa1',
+      content:'aaa1',
+      author:'aaa1',
       dateCreated: new Date()
     }
-    axios.post("http://localhost:3000/api/posts", postObject)
+    createPost(postObject)
   }
 
-  /*
-  useEffect(() => {
-    async function grabData() {
-      try {
-        const response = await axios.get("http://localhost:3000/api/posts");
-        console.log(response);
-        if (response.status === 200) {
-          setData(response.data);
+  
+  /*useEffect(() => {
+    async function loadAllPosts() {
+      let data = await getPosts()
+        if(data){
+          setPosts(data)
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
     }
-
-    grabData();
-  }, []);
-  */
-
+    loadAllPosts()
+  }, []);*/
 
   return (
     <div className='app'>
-      <button onClick={createPost}>Click</button>
+      <button onClick={makePost}>Click</button>
     </div>
   )
 }
