@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
-app.use("/", postRoutes);
+app.use("/api/posts", postRoutes);
 
 mongoose.connect(process.env.ATLAS_URI)
     .then(() => {
