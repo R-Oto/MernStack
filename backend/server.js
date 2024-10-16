@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json())
 app.use(cors())
 
-app.listen(port, () => {
-    connect.connectToServer()
-    console.log(`Server started on port ${port}`)
-})
+app.listen(port, async () => {
+    connect.connectToServer();
+    console.log(`Server started on port ${port}`);
+});
