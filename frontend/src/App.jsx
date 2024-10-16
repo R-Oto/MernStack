@@ -4,6 +4,18 @@ const App = () => {
 
   const [data, setData] = useState();
 
+  async function createPost(){
+    let postObject = {
+      title:'aaa',
+      description:'aaa',
+      content:'aaa',
+      author:'aaa',
+      dateCreated: new Date()
+    }
+    axios.post("http://localhost:3000/api/posts", postObject)
+  }
+
+  /*
   useEffect(() => {
     async function grabData() {
       try {
@@ -19,10 +31,12 @@ const App = () => {
 
     grabData();
   }, []);
+  */
+
 
   return (
     <div className='app'>
-      {JSON.stringify(data)}
+      <button onClick={createPost}>Click</button>
     </div>
   )
 }
